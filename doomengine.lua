@@ -31,20 +31,29 @@ function DoomEngine:Render()
     self.m_pViewRenderer:Render(self.m_bRenderAutoMap)
 end
 
-function DoomEngine:KeyPressed(key)
-    print("key pressed: " .. key)
+
+function DoomEngine:KeyPressed(key, hold)
+    -- print("key pressed: " .. key)
+    if hold == nil then
+        hold = false
+    end
     if key == "a" then
         self.m_Player:RotateLeft()
     elseif key == "d" then
         self.m_Player:RotateRight()
-    elseif key == "tab" then
+    elseif key == "w" then
+        self.m_Player:MoveForward()
+    elseif key == "s" then
+        self.m_Player:MoveBackward()
+    
+    elseif key == "tab" and not hold then
         self.m_bRenderAutoMap = not self.m_bRenderAutoMap
 
     end
 end
 
 function DoomEngine:KeyReleased(key)
-    print("key released: " .. key) 
+    -- print("key released: " .. key) 
 
 end
 
@@ -70,6 +79,16 @@ function DoomEngine:Init()
     
     self.m_WADLoader:LoadWAD(self:GetWADFileName())
     self.m_WADLoader:LoadMapData(self.m_Map)
+
+    local thing = self.m_Map:GetThings():GetThingByID(1)
+
+    -- print(thing, thing.X_Po)
+    self.m_Player:Init(thing)
+
+    print(self.m_Player:GetXPosition(), self.m_Player:GetYPosition(), self.m_Player:GetAngle().m_Angle)
+
+    self.m_Map:Init()
+
 end
 
 

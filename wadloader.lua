@@ -92,6 +92,42 @@ function WADLoader:ReadMapVertex(map)
         map:AddVertex(vertex)
     end
 end
+function WADLoader:ReadMapSectors(map)
+    local iMapIndex = self:FindMapIndex(map)
+    if iMapIndex == nil then
+        return false
+    end
+    iMapIndex = iMapIndex + types.EMAPLUMPSINDEX.eSECTORS
+    if self.directories[iMapIndex].LumpName ~= "SECTORS" then
+        return false
+    end
+        local iSectorSizeInBytes     = 16 + 2*5
+    local iSectorsCount    = self.directories[iMapIndex].LumpSize / iSectorSizeInBytes
+    self.m_reader.file.jump(self.directories[iMapIndex].LumpOffset)
+    for i = 1,iSectorsCount do
+        local sector = self.m_reader:ReadSectorData()
+        map:AddSector(sector)
+    end
+end
+
+function WADLoader:ReadMapSidedefs(map)
+    local iMapIndex = self:FindMapIndex(map)
+    if iMapIndex == nil then
+        return false
+    end
+    iMapIndex = iMapIndex + types.EMAPLUMPSINDEX.eSIDEDDEFS
+    if self.directories[iMapIndex].LumpName ~= "SIDEDEFS" then
+        return false
+    end
+    local iSidedefSizeInBytes    = 2*3 + 8*3
+    local iSidedefsCount   = self.directories[iMapIndex].LumpSize / iSidedefSizeInBytes
+    self.m_reader.file.jump(self.directories[iMapIndex].LumpOffset)
+    for i = 1,iSidedefsCount do
+        local sidedef = self.m_reader:ReadSidedefData()
+        map:AddSidedef(sidedef)
+    end
+end
+
 function WADLoader:ReadMapLineDef(map)
     local iMapIndex = self:FindMapIndex(map)
     if iMapIndex == nil then
@@ -115,18 +151,26 @@ function WADLoader:LoadMapData(map)
     self:ReadMapVertex(map)
     print("INFO: Vertexes:"..#map.m_Vertexes)
     
+    self:ReadMapSectors(map)
+    print("INFO: Sectors:"..#map.m_Sectors)
+
+    self:ReadMapSidedefs(map)
+    print("INFO: Sidedefs:"..#map.m_pSidedefs)
+
     self:ReadMapLineDef(map)
-    print("INFO: Linedefs:"..#map.m_Linedefs)
+    print("INFO: Linedefs:"..#map.m_pLinedefs)
+    
+    self:ReadMapSegs(map)
+    print("INFO: Segs:"..#map.m_pSegs)
 
     self:ReadMapThing(map)
-    print("INFO: Things:"..#map.m_Things)
+    print("INFO: Things:"..#map:GetThings().m_Things)
 
     self:ReadMapNodes(map)
     print("INFO: Nodes:"..#map.m_Nodes)
+
     self:ReadMapSubsectors(map)
     print("INFO: Subsectors:"..#map.m_Subsector)
-    self:ReadMapSegs(map)
-    print("INFO: Segs:"..#map.m_Segs)
     return map
 end
 
@@ -142,9 +186,10 @@ function WADLoader:ReadMapThing(map)
     local iThingSizeInBytes  = 2*5
     local iThingCount  = self.directories[iMapIndex].LumpSize / iThingSizeInBytes 
     self.m_reader.file.jump(self.directories[iMapIndex].LumpOffset)
-    for i = 1,iThingCount  do 
+    local thingsList =  map:GetThings()
+    for i = 1,iThingCount do 
         local thing = self.m_reader:ReadThingData()
-        map:AddThing(thing)
+        thingsList:AddThing(thing)
     end
 end
 

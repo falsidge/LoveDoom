@@ -66,6 +66,62 @@ function WADReader:ReadVertexData(file, offset, vertex)
     vertex.y = file.read_i16()
     return vertex
 end
+function WADReader:ReadSectorData(file, offset, sector)
+    if file == nil then
+        file = self.file
+    end
+    if offset ~= nil then
+        file.jump(offset)
+    end    
+    if sector == nil then
+        return types.Sector:new(
+            {
+                FloorHeight = file.read_i16(),
+                CeilingHeight = file.read_i16(),
+                FloorTexture = file.read_trimmed_string(8),
+                CeilingTexture = file.read_trimmed_string(8),
+                LightLevel = file.read_u16(),
+                Type = file.read_u16(),
+                Tag = file.read_u16()
+            }
+        )
+    end
+    sector.FloorHeight = file.read_i16()
+    sector.CeilingHeight = file.read_i16()
+    sector.FloorTexture = file.read_trimmed_string(8)
+    sector.CeilingTexture = file.read_trimmed_string(8)
+    sector.LightLevel = file.read_u16()
+    sector.Type = file.read_u16()
+    sector.Tag = file.read_u16()
+
+end
+
+function WADReader:ReadSidedefData(file, offset, sidedef)
+    if file == nil then
+        file = self.file
+    end
+    if offset ~= nil then
+        file.jump(offset)
+    end    
+    if sidedef == nil then
+        return types.WADSidedef:new{
+            XOffset = file.read_i16(),
+            YOffset = file.read_i16(),
+            UpperTexture = file.read_trimmed_string(8),
+            LowerTexture = file.read_trimmed_string(8),
+            MiddleTexture = file.read_trimmed_string(8),
+            SectorID = file.read_u16()
+        }
+    end
+    sidedef.XOffset = file.read_i16()
+    sidedef.YOffset = file.read_i16()
+    sidedef.UpperTexture = file.read_trimmed_string(8)
+    sidedef.LowerTexture = file.read_trimmed_string(8)
+    sidedef.MiddleTexture = file.read_trimmed_string(8)
+    sidedef.SectorID = file.read_u16()
+    return sidedef
+end
+
 function WADReader:ReadLineDefData(file, offset, linedef)
     if file == nil then
         file = self.file
@@ -74,7 +130,7 @@ function WADReader:ReadLineDefData(file, offset, linedef)
         file.jump(offset)
     end    
     if linedef == nil then
-        return types.Linedef:new{
+        return types.WADLinedef:new{
             StartVertex = file.read_u16(),
             EndVertex = file.read_u16(),
             Flags = file.read_u16(),
@@ -103,15 +159,15 @@ function WADReader:ReadThingData(file, offset, thing)
     end    
     if thing == nil then
         return types.Thing:new{
-            x = file.read_i16(),
-            y = file.read_i16(),
+            XPosition = file.read_i16(),
+            YPosition = file.read_i16(),
             Angle = file.read_u16(),
             Type = file.read_u16(),
             Flags = file.read_u16()
         }
     end
-    thing.x = file.read_i16()
-    thing.y = file.read_i16()
+    thing.XPosition = file.read_i16()
+    thing.YPosition = file.read_i16()
     thing.Angle = file.read_u16()
     thing.Type = file.read_u16()
     thing.Flags = file.read_u16()
@@ -186,11 +242,11 @@ function WADReader:ReadSegData(file, offset, seg)
         file.jump(offset)
     end    
     if seg == nil then
-        return types.Seg:new(
+        return types.WADSeg:new(
             {
                 StartVertexID  = file.read_u16(),
                 EndVertexID  = file.read_u16(),
-                Angle = file.read_u16(),
+                SlopeAngle = file.read_u16(),
                 LinedefID  = file.read_u16(),
                 Direction = file.read_u16(),
                 Offset = file.read_u16()

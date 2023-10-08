@@ -26,7 +26,7 @@ function love.draw()
     love.graphics.print("hello world", 400, 300)
 end
 
-
+local pressedKeys = {}
 local tot_dt = 0
 function love.update(dt)
     tot_dt = tot_dt + dt
@@ -35,13 +35,21 @@ function love.update(dt)
     end
     m_pDoomEngine:Update()
     tot_dt = 0
+    for i,v in pairs(pressedKeys) do
+        if v then
+            m_pDoomEngine:KeyPressed(i, true)
+        end
+    end
 end
 
+
 function love.keypressed(key, scancode, isrepeat)
+    pressedKeys[key] = true
     m_pDoomEngine:KeyPressed(key)
 end
 
 function love.keyreleased(key, scancode)
+    pressedKeys[key] = false
     m_pDoomEngine:KeyReleased(key)
 end
 
