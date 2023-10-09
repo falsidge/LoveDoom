@@ -121,7 +121,13 @@ function Player:MoveBackward()
     self.m_YPosition = self.m_YPosition - math.sin(math.rad(self.m_Angle.m_Angle)) * self.m_iMoveSpeed
 end
 
+function Player:Fly()
+    self.m_ZPosition = self.m_ZPosition + 1
+end
 
+function Player:Sink()
+    self.m_ZPosition = self.m_ZPosition - 1
+end
 
 function Player:RenderAutoMap()
     love.graphics.setColor(1, 0, 0, 1)

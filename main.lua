@@ -16,7 +16,7 @@ print((test + test2 + 25).m_Angle)
 -- wad:LoadMapData(Map:new{m_sName="E1M1"})
 
 local m_pDoomEngine = DoomEngine:new()
-
+love.window.setMode( 320, 200 )
 
 m_pDoomEngine:Init()
 

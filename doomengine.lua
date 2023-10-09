@@ -33,7 +33,7 @@ end
 
 
 function DoomEngine:KeyPressed(key, hold)
-    -- print("key pressed: " .. key)
+    print("key pressed: " .. key)
     if hold == nil then
         hold = false
     end
@@ -45,7 +45,14 @@ function DoomEngine:KeyPressed(key, hold)
         self.m_Player:MoveForward()
     elseif key == "s" then
         self.m_Player:MoveBackward()
-    
+    elseif key == "space" then
+        self.m_Player:Fly()
+    elseif key == "lshift" then
+        self.m_Player:Sink()
+    elseif key == "r" then
+        local thing = self.m_Map:GetThings():GetThingByID(1)
+
+        self.m_Player:Init(thing)
     elseif key == "tab" and not hold then
         self.m_bRenderAutoMap = not self.m_bRenderAutoMap
 
