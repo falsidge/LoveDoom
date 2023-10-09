@@ -9,7 +9,8 @@ Player = {
     m_FOV = Angle:new(90),
     m_iRotationSpeed = Angle:new(4),
     m_pViewRenderer = ViewRenderer:new(),
-    m_iMoveSpeed = 4
+    m_iMoveSpeed = 4,
+    m_Eyelevel = 41
 }
 
 function Player:new(o)
@@ -127,6 +128,10 @@ end
 
 function Player:Sink()
     self.m_ZPosition = self.m_ZPosition - 1
+end
+
+function Player:Think(iSubSectorHeight)
+    self.m_ZPosition = iSubSectorHeight + self.m_Eyelevel
 end
 
 function Player:RenderAutoMap()

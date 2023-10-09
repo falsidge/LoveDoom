@@ -68,6 +68,7 @@ function DoomEngine:Quit()
 end
 
 function DoomEngine:Update()
+    self.m_Player:Think(self.m_Map:GetPlayerSubSectorHeight())
 end
 
 function DoomEngine:IsOver()

@@ -292,7 +292,19 @@ function Map:RenderSubSector(iSubsectorID)
     end
 end
 
-
+function Map:GetPlayerSubSectorHeight()
+    local iSubsectorID = #self.m_Nodes - 1;
+    while (bit32.band(iSubsectorID,SUBSECTORIDENTIFIER) == 0) do
+        if (self:IsPointOnLeftSide(self.m_Player:GetXPosition(), self.m_Player:GetYPosition(), iSubsectorID)) then
+            iSubsectorID = self.m_Nodes[iSubsectorID+1].LeftChildID;
+        else
+            iSubsectorID = self.m_Nodes[iSubsectorID+1].RightChildID;
+        end
+    end
+    local subsector = self.m_Subsector[bit32.band(iSubsectorID, bit32.bnot(SUBSECTORIDENTIFIER))+1]
+    local seg = self.m_Segs[subsector.FirstSegID + 1]
+    return seg.pRightSector.FloorHeight
+end
 
 function Map:AddSidedef(sidedef)
     table.insert(self.m_pSidedefs, sidedef)
